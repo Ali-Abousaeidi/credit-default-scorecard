@@ -22,7 +22,18 @@ from src.config import (
 
 def display_name(woe_feature: str) -> str:
     """Return a readable feature name from a WoE feature."""
-    return woe_feature[: -len("_woe")] if woe_feature.endswith("_woe") else woe_feature
+    feature = woe_feature[: -len("_woe")] if woe_feature.endswith("_woe") else woe_feature
+    labels = {
+        "RevolvingUtilizationOfUnsecuredLines": "Revolving utilization",
+        "NumberOfTime30-59DaysPastDueNotWorse": "30-59 DPD count",
+        "NumberOfTimes90DaysLate": "90+ DPD count",
+        "NumberRealEstateLoansOrLines": "Real estate loans/lines",
+        "NumberOfDependents": "Dependents",
+        "MonthlyIncome": "Monthly income",
+        "DebtRatio": "Debt ratio",
+        "age": "Age",
+    }
+    return labels.get(feature, feature)
 
 
 def load_inputs() -> tuple[dict, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -78,7 +89,7 @@ def save_global_importance_plot(importance: pd.DataFrame) -> None:
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     sns.set_theme(style="whitegrid")
     plot_data = importance.sort_values("mean_abs_shap_log_odds", ascending=True)
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(10, 5.5))
     sns.barplot(
         data=plot_data,
         x="mean_abs_shap_log_odds",
@@ -88,8 +99,13 @@ def save_global_importance_plot(importance: pd.DataFrame) -> None:
     plt.xlabel("Mean absolute SHAP value, log-odds scale")
     plt.ylabel("")
     plt.title("Global SHAP importance")
-    plt.tight_layout()
-    plt.savefig(FIGURES_DIR / "shap_global_importance.png", dpi=160)
+    plt.tight_layout(pad=1.4)
+    plt.savefig(
+        FIGURES_DIR / "shap_global_importance.png",
+        dpi=180,
+        bbox_inches="tight",
+        pad_inches=0.2,
+    )
     plt.close()
 
 
@@ -136,14 +152,20 @@ def save_reason_code_plots(reason_codes: pd.DataFrame) -> None:
     for example, data in reason_codes.groupby("example"):
         plot_data = data.sort_values("shap_value_log_odds", ascending=True)
         colors = ["#E45756" if value > 0 else "#4C78A8" for value in plot_data["shap_value_log_odds"]]
-        plt.figure(figsize=(8, 4.5))
+        plt.figure(figsize=(10, 5.2))
         plt.barh(plot_data["characteristic"], plot_data["shap_value_log_odds"], color=colors)
         plt.axvline(0, color="black", linewidth=0.8)
+        plt.margins(x=0.12)
         plt.xlabel("SHAP contribution to log-odds of default")
         plt.ylabel("")
         plt.title(f"Reason-code example: {example.replace('_', ' ')}")
-        plt.tight_layout()
-        plt.savefig(FIGURES_DIR / f"reason_codes_{example}.png", dpi=160)
+        plt.tight_layout(pad=1.4)
+        plt.savefig(
+            FIGURES_DIR / f"reason_codes_{example}.png",
+            dpi=180,
+            bbox_inches="tight",
+            pad_inches=0.2,
+        )
         plt.close()
 
 

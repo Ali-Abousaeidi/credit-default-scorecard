@@ -125,7 +125,7 @@ def save_score_distribution_plot(train_scores: pd.DataFrame, test_scores: pd.Dat
         ignore_index=True,
     )
     sns.set_theme(style="whitegrid")
-    plt.figure(figsize=(9, 5))
+    plt.figure(figsize=(10, 5.8))
     sns.histplot(
         data=plot_data,
         x="score",
@@ -138,8 +138,8 @@ def save_score_distribution_plot(train_scores: pd.DataFrame, test_scores: pd.Dat
     plt.title("Score distribution")
     plt.xlabel("Score, higher is safer")
     plt.ylabel("Density")
-    plt.tight_layout()
-    plt.savefig(FIGURES_DIR / "score_distribution.png", dpi=160)
+    plt.tight_layout(pad=1.4)
+    plt.savefig(FIGURES_DIR / "score_distribution.png", dpi=180, bbox_inches="tight", pad_inches=0.2)
     plt.close()
 
 

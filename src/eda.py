@@ -165,37 +165,48 @@ def save_figures(data: pd.DataFrame, column_summary: pd.DataFrame) -> None:
     sns.set_theme(style="whitegrid")
 
     target_summary = summarize_target(data)
-    plt.figure(figsize=(6, 4))
+    plt.figure(figsize=(7.5, 4.8))
     sns.barplot(data=target_summary, x=TARGET_COLUMN, y="count", color="#4C78A8")
     plt.title("Target distribution")
     plt.xlabel("Serious delinquency within two years")
     plt.ylabel("Count")
-    plt.tight_layout()
-    plt.savefig(FIGURES_DIR / "target_distribution.png", dpi=160)
+    plt.tight_layout(pad=1.4)
+    plt.savefig(FIGURES_DIR / "target_distribution.png", dpi=180, bbox_inches="tight", pad_inches=0.2)
     plt.close()
 
     missing = column_summary[column_summary["missing_count"] > 0].copy()
     if not missing.empty:
         missing = missing.sort_values("missing_pct", ascending=False)
-        plt.figure(figsize=(8, 4))
-        sns.barplot(data=missing, y="column", x="missing_pct", color="#F58518")
+        missing["display_column"] = missing["column"].replace(
+            {
+                "MonthlyIncome": "Monthly income",
+                "NumberOfDependents": "Dependents",
+            }
+        )
+        plt.figure(figsize=(8.5, 4.8))
+        sns.barplot(data=missing, y="display_column", x="missing_pct", color="#F58518")
         plt.title("Missing value rate")
         plt.xlabel("Missing rate")
         plt.ylabel("")
-        plt.tight_layout()
-        plt.savefig(FIGURES_DIR / "missingness.png", dpi=160)
+        plt.tight_layout(pad=1.4)
+        plt.savefig(FIGURES_DIR / "missingness.png", dpi=180, bbox_inches="tight", pad_inches=0.2)
         plt.close()
 
     utilization_clip = data["RevolvingUtilizationOfUnsecuredLines"].clip(
         upper=data["RevolvingUtilizationOfUnsecuredLines"].quantile(0.99)
     )
-    plt.figure(figsize=(8, 4))
+    plt.figure(figsize=(9, 4.8))
     sns.histplot(utilization_clip, bins=50, color="#54A24B")
     plt.title("Revolving utilization distribution, clipped at p99")
     plt.xlabel("Revolving utilization")
     plt.ylabel("Rows")
-    plt.tight_layout()
-    plt.savefig(FIGURES_DIR / "revolving_utilization_distribution.png", dpi=160)
+    plt.tight_layout(pad=1.4)
+    plt.savefig(
+        FIGURES_DIR / "revolving_utilization_distribution.png",
+        dpi=180,
+        bbox_inches="tight",
+        pad_inches=0.2,
+    )
     plt.close()
 
 

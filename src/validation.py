@@ -190,19 +190,19 @@ def save_validation_plots(
     pd_pred = scores["pd"]
     fpr, tpr, thresholds = roc_curve(y_true, pd_pred)
 
-    plt.figure(figsize=(6, 5))
+    plt.figure(figsize=(7.2, 5.8))
     plt.plot(fpr, tpr, label=f"AUC = {roc_auc_score(y_true, pd_pred):.3f}")
     plt.plot([0, 1], [0, 1], linestyle="--", color="gray")
     plt.xlabel("False positive rate")
     plt.ylabel("True positive rate")
     plt.title("ROC curve")
     plt.legend(loc="lower right")
-    plt.tight_layout()
-    plt.savefig(FIGURES_DIR / "roc_curve.png", dpi=160)
+    plt.tight_layout(pad=1.4)
+    plt.savefig(FIGURES_DIR / "roc_curve.png", dpi=180, bbox_inches="tight", pad_inches=0.2)
     plt.close()
 
     ks_values = tpr - fpr
-    plt.figure(figsize=(7, 5))
+    plt.figure(figsize=(8.2, 5.8))
     plt.plot(thresholds, tpr, label="Cumulative bads")
     plt.plot(thresholds, fpr, label="Cumulative goods")
     plt.plot(thresholds, ks_values, label="KS gap")
@@ -210,11 +210,11 @@ def save_validation_plots(
     plt.ylabel("Rate")
     plt.title("KS curve")
     plt.legend()
-    plt.tight_layout()
-    plt.savefig(FIGURES_DIR / "ks_curve.png", dpi=160)
+    plt.tight_layout(pad=1.4)
+    plt.savefig(FIGURES_DIR / "ks_curve.png", dpi=180, bbox_inches="tight", pad_inches=0.2)
     plt.close()
 
-    plt.figure(figsize=(7, 5))
+    plt.figure(figsize=(8.2, 5.8))
     sns.lineplot(
         data=rank_table,
         x="score_band",
@@ -225,23 +225,28 @@ def save_validation_plots(
     plt.xlabel("Score band, low score to high score")
     plt.ylabel("Observed bad rate")
     plt.title("Rank ordering by score band")
-    plt.tight_layout()
-    plt.savefig(FIGURES_DIR / "rank_ordering_bad_rate.png", dpi=160)
+    plt.tight_layout(pad=1.4)
+    plt.savefig(
+        FIGURES_DIR / "rank_ordering_bad_rate.png",
+        dpi=180,
+        bbox_inches="tight",
+        pad_inches=0.2,
+    )
     plt.close()
 
     frac_pos, mean_pred = calibration_curve(y_true, pd_pred, n_bins=10, strategy="quantile")
-    plt.figure(figsize=(6, 5))
+    plt.figure(figsize=(7.2, 5.8))
     plt.plot(mean_pred, frac_pos, marker="o", label="Model")
     plt.plot([0, 1], [0, 1], linestyle="--", color="gray", label="Perfect calibration")
     plt.xlabel("Mean predicted PD")
     plt.ylabel("Observed bad rate")
     plt.title("Calibration curve")
     plt.legend()
-    plt.tight_layout()
-    plt.savefig(FIGURES_DIR / "calibration_curve.png", dpi=160)
+    plt.tight_layout(pad=1.4)
+    plt.savefig(FIGURES_DIR / "calibration_curve.png", dpi=180, bbox_inches="tight", pad_inches=0.2)
     plt.close()
 
-    plt.figure(figsize=(7, 5))
+    plt.figure(figsize=(8.2, 5.8))
     sns.lineplot(
         data=calibration_table,
         x="mean_pd",
@@ -254,8 +259,13 @@ def save_validation_plots(
     plt.xlabel("Mean predicted PD")
     plt.ylabel("Observed bad rate")
     plt.title("Calibration by PD decile")
-    plt.tight_layout()
-    plt.savefig(FIGURES_DIR / "calibration_by_decile.png", dpi=160)
+    plt.tight_layout(pad=1.4)
+    plt.savefig(
+        FIGURES_DIR / "calibration_by_decile.png",
+        dpi=180,
+        bbox_inches="tight",
+        pad_inches=0.2,
+    )
     plt.close()
 
 

@@ -95,7 +95,7 @@ def save_roc_comparison(
     champ_auc = roc_auc_score(y_test, champion_pd)
     chall_auc = roc_auc_score(y_test, challenger_pd)
 
-    plt.figure(figsize=(6, 5))
+    plt.figure(figsize=(7.2, 5.8))
     plt.plot(champ_fpr, champ_tpr, label=f"Scorecard AUC={champ_auc:.3f}")
     plt.plot(chall_fpr, chall_tpr, label=f"XGBoost AUC={chall_auc:.3f}")
     plt.plot([0, 1], [0, 1], linestyle="--", color="gray")
@@ -103,8 +103,13 @@ def save_roc_comparison(
     plt.ylabel("True positive rate")
     plt.title("Champion vs challenger ROC")
     plt.legend(loc="lower right")
-    plt.tight_layout()
-    plt.savefig(FIGURES_DIR / "champion_challenger_roc.png", dpi=160)
+    plt.tight_layout(pad=1.4)
+    plt.savefig(
+        FIGURES_DIR / "champion_challenger_roc.png",
+        dpi=180,
+        bbox_inches="tight",
+        pad_inches=0.2,
+    )
     plt.close()
 
 
