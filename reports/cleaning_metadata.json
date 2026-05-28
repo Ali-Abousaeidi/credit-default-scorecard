@@ -1,0 +1,44 @@
+{
+  "raw_rows": 150000,
+  "target_column": "SeriousDlqin2yrs",
+  "basic_cleaning": [
+    {
+      "rule": "drop_age_le_zero",
+      "rows_removed": 1,
+      "reason": "Age must be positive; one zero-age record is invalid."
+    },
+    {
+      "rule": "replace_96_98_delinquency_counts_with_missing",
+      "columns": [
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "NumberOfTimes90DaysLate",
+        "NumberOfTime60-89DaysPastDueNotWorse"
+      ],
+      "counts": {
+        "NumberOfTime30-59DaysPastDueNotWorse": 269,
+        "NumberOfTimes90DaysLate": 269,
+        "NumberOfTime60-89DaysPastDueNotWorse": 269
+      },
+      "reason": "96/98 are sentinel-like values, not plausible delinquency counts."
+    }
+  ],
+  "post_basic_cleaning_rows": 149999,
+  "split": {
+    "type": "stratified_random",
+    "test_size": 0.25,
+    "random_state": 42,
+    "train_rows": 112499,
+    "test_rows": 37500,
+    "train_bad_rate": 0.0668361496546636,
+    "test_bad_rate": 0.06685333333333333
+  },
+  "fitted_upper_caps": {
+    "RevolvingUtilizationOfUnsecuredLines": 1.3595517207299905,
+    "DebtRatio": 6184.0199999999895
+  },
+  "outputs": {
+    "train_clean": "D:\\Credit Default Scorecard Project\\data\\processed\\train_clean.csv",
+    "test_clean": "D:\\Credit Default Scorecard Project\\data\\processed\\test_clean.csv",
+    "cleaning_metadata": "D:\\Credit Default Scorecard Project\\reports\\cleaning_metadata.json"
+  }
+}

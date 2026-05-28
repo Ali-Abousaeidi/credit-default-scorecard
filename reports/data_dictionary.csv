@@ -1,0 +1,12 @@
+column,description,expected_risk_direction,phase_1_note
+SeriousDlqin2yrs,Person experienced serious delinquency within two years.,"Target: 1 is bad, 0 is good.",Direct target field for Give Me Some Credit.
+RevolvingUtilizationOfUnsecuredLines,Credit card and unsecured line utilization.,Higher utilization should generally mean higher risk.,Values above 1 need review as extreme utilization/outlier behavior.
+age,Borrower age in years.,Younger borrowers may carry higher risk; relationship can be nonlinear.,Age 0 is invalid and must be handled in cleaning.
+NumberOfTime30-59DaysPastDueNotWorse,Count of 30-59 day delinquencies in the last two years.,Higher count should mean higher risk.,Values 96 and 98 are sentinel-like outliers to treat deliberately.
+DebtRatio,Monthly debt payments and living costs divided by monthly gross income.,Higher ratio should generally mean higher risk.,"Very large values need review, especially when income is missing."
+MonthlyIncome,Monthly gross income.,Higher income should generally mean lower risk.,"Missing values should likely be retained as a WoE bin, not blindly imputed."
+NumberOfOpenCreditLinesAndLoans,Open installment loans and credit lines.,Ambiguous/nonlinear; too few or too many lines may be risky.,Review binning manually rather than forcing a simple direction.
+NumberOfTimes90DaysLate,Count of 90+ day delinquencies.,Higher count should mean higher risk.,Values 96 and 98 are sentinel-like outliers to treat deliberately.
+NumberRealEstateLoansOrLines,"Mortgage and real estate loan count, including home equity lines.",Ambiguous/nonlinear; moderate secured credit can be lower risk.,Review binning manually.
+NumberOfTime60-89DaysPastDueNotWorse,Count of 60-89 day delinquencies in the last two years.,Higher count should mean higher risk.,Values 96 and 98 are sentinel-like outliers to treat deliberately.
+NumberOfDependents,Number of dependents in family excluding the borrower.,"More dependents may mean higher obligations, but effect is often weak.",Missing values should be reviewed and likely kept as a bin.

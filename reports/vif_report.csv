@@ -1,0 +1,9 @@
+feature,vif,passes_vif_check
+RevolvingUtilizationOfUnsecuredLines_woe,1.413065338089849,True
+NumberOfTimes90DaysLate_woe,1.2801312362466157,True
+NumberOfTime30-59DaysPastDueNotWorse_woe,1.251772567681571,True
+age_woe,1.2245592956207068,True
+NumberRealEstateLoansOrLines_woe,1.1455640757482901,True
+NumberOfDependents_woe,1.1450796692867775,True
+DebtRatio_woe,1.100529098356389,True
+MonthlyIncome_woe,1.064895582352507,True

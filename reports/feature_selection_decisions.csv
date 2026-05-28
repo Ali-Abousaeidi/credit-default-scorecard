@@ -1,0 +1,3 @@
+feature,reason,coefficient,pvalue
+NumberOfOpenCreditLinesAndLoans_woe,p-value above 0.05,-0.06434789034660857,0.182514970849176
+NumberOfTime60-89DaysPastDueNotWorse_woe,wrong coefficient sign for WoE orientation,0.5535647000798057,6.699034373290876e-25

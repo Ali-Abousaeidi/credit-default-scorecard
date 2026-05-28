@@ -1,0 +1,7 @@
+column,sentinel_value,count,rate
+NumberOfTime30-59DaysPastDueNotWorse,96,5,3.3333333333333335e-05
+NumberOfTime30-59DaysPastDueNotWorse,98,264,0.00176
+NumberOfTimes90DaysLate,96,5,3.3333333333333335e-05
+NumberOfTimes90DaysLate,98,264,0.00176
+NumberOfTime60-89DaysPastDueNotWorse,96,5,3.3333333333333335e-05
+NumberOfTime60-89DaysPastDueNotWorse,98,264,0.00176

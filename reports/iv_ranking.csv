@@ -1,0 +1,11 @@
+variable,iv,iv_band,status,monotonic_trend,n_data_bins,selected_for_modeling,review_flag
+RevolvingUtilizationOfUnsecuredLines,1.1197211139537449,suspiciously strong - review for leakage,OPTIMAL,ascending,9,True,True
+NumberOfTimes90DaysLate,0.8303095218304974,suspiciously strong - review for leakage,OPTIMAL,ascending,3,True,True
+NumberOfTime30-59DaysPastDueNotWorse,0.7357330553499282,suspiciously strong - review for leakage,OPTIMAL,ascending,4,True,True
+age,0.26629104734101433,medium,OPTIMAL,descending,10,True,False
+NumberOfOpenCreditLinesAndLoans,0.08517079107516522,weak,OPTIMAL,auto,10,True,False
+MonthlyIncome,0.07927712793699364,weak,OPTIMAL,descending,8,True,False
+NumberRealEstateLoansOrLines,0.0567019035070802,weak,OPTIMAL,auto,5,True,False
+NumberOfTime60-89DaysPastDueNotWorse,0.03888402259843463,weak,OPTIMAL,ascending,2,True,False
+NumberOfDependents,0.03459803482304883,weak,OPTIMAL,auto,5,True,False
+DebtRatio,0.022122871761255665,weak,OPTIMAL,ascending,6,True,False

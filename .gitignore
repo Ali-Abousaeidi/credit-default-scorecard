@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Data and model artifacts
+data/raw/*
+data/processed/*
+models/*
+
+# Keep empty project directories
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!models/.gitkeep
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Local/editor files
+.env
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Source planning file, not intended for public repo
+Credit_Default_Scorecard_Project_Plan.docx
+
+# Generated reports
+*.html
+*.pdf
+*.pkl
+*.joblib
