@@ -16,7 +16,6 @@ from src.config import (
     TRAIN_WOE_FILE,
 )
 
-
 MAX_PVALUE = 0.05
 MAX_VIF = 5.0
 

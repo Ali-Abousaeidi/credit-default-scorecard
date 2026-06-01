@@ -127,6 +127,14 @@ Validation sample: held-out test set only.
 | Brier score | 0.0510 |
 | Score PSI | 0.0003 |
 
+Bootstrap 95% confidence intervals:
+
+| Metric | 95% CI |
+|--------|--------|
+| AUC | [0.8408, 0.8555] |
+| Gini | [0.6817, 0.7110] |
+| KS | [0.5287, 0.5593] |
+
 Rank ordering:
 
 - Eight quantile score bands
@@ -137,6 +145,18 @@ Stability:
 
 - Score PSI indicates no significant train/test population shift.
 - Selected raw-characteristic PSI values are all below 0.10.
+
+Calibration:
+
+- Raw scorecard PD mean: 6.73%
+- Observed test bad rate: 6.69%
+- Platt scaling benchmark has effectively unchanged AUC, Brier score, and log loss.
+- Calibration outputs are saved in `reports/calibration_summary.md`.
+
+Binning diagnostics:
+
+- Final scorecard characteristics have bin-level population share, bad-rate,
+  and WoE plots in `reports/figures/bin_diagnostic_*.png`.
 
 ## 8. Explainability
 
@@ -175,6 +195,8 @@ Interpretation: XGBoost improves discrimination, but the logistic scorecard rema
 - No fairness testing is included.
 - No production monitoring pipeline is included.
 - Regulatory notes are contextual and not legal advice.
+- `age` is used for this public-data demonstration but would require legal,
+  compliance, and fair-lending review before any production use.
 
 ## 11. Monitoring Plan
 
@@ -196,7 +218,11 @@ reports/binning_summary.md
 reports/model_summary.md
 reports/scorecard_summary.md
 reports/validation_summary.md
+reports/calibration_summary.md
+reports/bin_diagnostics_summary.md
 reports/explainability_summary.md
 reports/challenger_summary.md
 docs/regulatory_context.md
+docs/streamlit_demo.md
+docs/lending_club_extension.md
 ```

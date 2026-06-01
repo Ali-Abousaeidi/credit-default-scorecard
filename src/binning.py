@@ -17,7 +17,6 @@ from src.config import (
     TRAIN_WOE_FILE,
 )
 
-
 MONOTONIC_TRENDS = {
     "RevolvingUtilizationOfUnsecuredLines": "ascending",
     "age": "descending",

@@ -19,7 +19,6 @@ from src.config import (
     TRAIN_CLEAN_FILE,
 )
 
-
 CHALLENGER_MODEL_FILE = MODELS_DIR / "xgboost_challenger.joblib"
 
 

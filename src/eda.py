@@ -11,7 +11,6 @@ import seaborn as sns
 from src.config import FIGURES_DIR, RAW_GMSC_FILE, REPORTS_DIR, TARGET_COLUMN
 from src.data_prep import load_raw_data, validate_target
 
-
 LATE_PAYMENT_COLUMNS = [
     "NumberOfTime30-59DaysPastDueNotWorse",
     "NumberOfTimes90DaysLate",

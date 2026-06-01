@@ -37,3 +37,14 @@ https://www.bankingsupervision.europa.eu/press/other-publications/publications/h
 Project implication: even though this is not an IRB regulatory-capital model,
 the documentation should mimic bank practice: objective, scope, data, method,
 assumptions, validation, monitoring, and limitations.
+
+## Responsible Lending And Sensitive Attributes
+
+This portfolio model uses `age` because it is present in the public dataset and
+has predictive signal. A production credit decisioning model would require a
+jurisdiction-specific legal, compliance, and fair-lending review before using
+age or any protected/sensitive characteristic directly or indirectly.
+
+Project implication: treat the current model as a technical scorecard
+demonstration. Before deployment, add fairness testing, policy review,
+adverse-action reason-code review, human oversight, and approval governance.

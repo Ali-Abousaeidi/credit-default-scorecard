@@ -16,6 +16,14 @@ Champion model: logistic regression on WoE-transformed predictors.
 | Brier score | 0.0510 |
 | Score PSI, train vs test | 0.0003 |
 
+Bootstrap 95% confidence intervals:
+
+| Metric | 95% CI |
+|--------|--------|
+| AUC | [0.8408, 0.8555] |
+| Gini | [0.6817, 0.7110] |
+| KS | [0.5287, 0.5593] |
+
 Scorecard scale: 600 points at 50:1 good:bad odds, PDO = 20.
 
 ![Score distribution](reports/figures/score_distribution.png)
@@ -39,10 +47,30 @@ The model validates on the held-out test set only. The rank-ordering table uses 
 Important validation outputs:
 
 - `reports/validation_metrics.csv`
+- `reports/validation_confidence_intervals.csv`
 - `reports/rank_ordering_table.csv`
 - `reports/calibration_table.csv`
+- `reports/calibration_comparison.csv`
 - `reports/psi_summary.csv`
 - `reports/validation_summary.md`
+- `reports/calibration_summary.md`
+
+## Calibration
+
+Platt scaling is included as a probability-calibration benchmark. The raw
+scorecard PD is already close to the observed central tendency, so the
+calibrated and raw probability metrics are effectively unchanged.
+
+![Calibration comparison](reports/figures/calibration_comparison.png)
+
+## Binning Diagnostics
+
+The final scorecard characteristics have bin-level diagnostic plots showing
+population share, bad rate, and WoE by bin.
+
+Example:
+
+![Utilization bin diagnostic](reports/figures/bin_diagnostic_revolvingutilizationofunsecuredlines.png)
 
 ## Explainability
 
@@ -102,7 +130,13 @@ pip install -r requirements.txt
 
 This repository was initialized with Python 3.12.13.
 
-Run the full pipeline:
+Run the full pipeline with one command:
+
+```bash
+python -m src.run_pipeline
+```
+
+Equivalent step-by-step commands:
 
 ```bash
 python -m src.fetch_data
@@ -112,9 +146,29 @@ python -m src.binning
 python -m src.model
 python -m src.scorecard
 python -m src.validation
+python -m src.calibration
+python -m src.diagnostics
 python -m src.explainability
 python -m src.challenger
 ```
+
+Run the test suite:
+
+```bash
+pytest
+ruff check .
+```
+
+## Streamlit Demo
+
+After running the pipeline, launch the interactive scorecard app:
+
+```bash
+streamlit run app/scorecard_app.py
+```
+
+The app lets a reviewer enter applicant characteristics and see the predicted
+PD, score, risk band, reason codes, and scorecard points table.
 
 ## Repository Map
 
@@ -123,6 +177,8 @@ data/raw/            original dataset files, git-ignored
 data/processed/      cleaned and transformed datasets, git-ignored
 notebooks/           EDA notebook entry point
 src/                 reproducible pipeline modules
+app/                 Streamlit scorecard demo
+tests/               regression tests
 reports/             metrics, scorecard, validation, and documentation outputs
 reports/figures/     plots used in README and reports
 models/              serialized models, git-ignored
@@ -132,4 +188,15 @@ MODEL_DOC.md         bank-style model documentation
 
 ## Caveats
 
-This is a portfolio scorecard, not a production credit decisioning system. It does not include adverse-action compliance review, fairness testing, production monitoring infrastructure, approval workflow, or independent model validation sign-off.
+This is a portfolio scorecard, not a production credit decisioning system. It does not include adverse-action compliance review, full fairness testing, production monitoring infrastructure, approval workflow, or independent model validation sign-off.
+
+The model uses `age` because it is present in the public dataset and has
+predictive signal. A production model would need jurisdiction-specific legal,
+compliance, and fair-lending review before using age or any protected/sensitive
+characteristic directly or indirectly.
+
+## Scale-Up Path
+
+`src/lending_club_adapter.py` and `docs/lending_club_extension.md` provide a
+scaffold for reusing the project on Lending Club data. The full second dataset
+is not committed because it is large and requires separate data-source handling.

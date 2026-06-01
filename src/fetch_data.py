@@ -17,7 +17,6 @@ from src.config import (
     TARGET_COLUMN,
 )
 
-
 OPENML_TARGET_COLUMN = "FinancialDistressNextTwoYears"
 
 

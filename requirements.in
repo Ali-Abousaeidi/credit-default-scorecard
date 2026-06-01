@@ -10,3 +10,6 @@ seaborn
 jupyter
 joblib
 openpyxl
+streamlit
+pytest
+ruff

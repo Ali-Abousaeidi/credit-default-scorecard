@@ -20,7 +20,6 @@ from src.config import (
     TRAIN_CLEAN_FILE,
 )
 
-
 LATE_PAYMENT_COLUMNS = [
     "NumberOfTime30-59DaysPastDueNotWorse",
     "NumberOfTimes90DaysLate",

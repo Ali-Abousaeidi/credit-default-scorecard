@@ -13,6 +13,7 @@ from sklearn.metrics import brier_score_loss, roc_auc_score, roc_curve
 from src.config import (
     FIGURES_DIR,
     LOGISTIC_MODEL_FILE,
+    RANDOM_STATE,
     REPORTS_DIR,
     TARGET_COLUMN,
     TEST_CLEAN_FILE,
@@ -20,6 +21,8 @@ from src.config import (
     TRAIN_CLEAN_FILE,
     TRAIN_SCORES_FILE,
 )
+
+BOOTSTRAP_ITERATIONS = 300
 
 
 def load_scores() -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -42,6 +45,45 @@ def calculate_discrimination(scores: pd.DataFrame) -> dict[str, float]:
         "ks": ks,
         "brier": float(brier_score_loss(y_true, pd_pred)),
     }
+
+
+def bootstrap_metric_confidence_intervals(
+    scores: pd.DataFrame,
+    n_iterations: int = BOOTSTRAP_ITERATIONS,
+) -> pd.DataFrame:
+    """Bootstrap confidence intervals for AUC, Gini, and KS on the holdout sample."""
+    rng = np.random.default_rng(RANDOM_STATE)
+    rows = []
+    y_true = scores[TARGET_COLUMN].to_numpy()
+    pd_pred = scores["pd"].to_numpy()
+    n_rows = len(scores)
+
+    for _ in range(n_iterations):
+        sample_index = rng.integers(0, n_rows, size=n_rows)
+        if np.unique(y_true[sample_index]).size < 2:
+            continue
+
+        sample_scores = pd.DataFrame(
+            {
+                TARGET_COLUMN: y_true[sample_index],
+                "pd": pd_pred[sample_index],
+            }
+        )
+        rows.append(calculate_discrimination(sample_scores))
+
+    boot = pd.DataFrame(rows)
+    summary_rows = []
+    for metric in ["auc", "gini", "ks"]:
+        summary_rows.append(
+            {
+                "metric": metric,
+                "mean": float(boot[metric].mean()),
+                "lower_95": float(boot[metric].quantile(0.025)),
+                "upper_95": float(boot[metric].quantile(0.975)),
+                "bootstrap_iterations": int(len(boot)),
+            }
+        )
+    return pd.DataFrame(summary_rows)
 
 
 def make_rank_ordering_table(scores: pd.DataFrame, n_bands: int = 8) -> pd.DataFrame:
@@ -271,12 +313,14 @@ def save_validation_plots(
 
 def write_validation_report(
     metrics: dict[str, float],
+    confidence_intervals: pd.DataFrame,
     rank_table: pd.DataFrame,
     psi_summary: pd.DataFrame,
 ) -> None:
     """Write validation summary report."""
     monotonic_rank_order = rank_table["observed_bad_rate"].is_monotonic_decreasing
     score_psi = psi_summary.loc[psi_summary["variable"] == "score", "psi"].iloc[0]
+    ci_lookup = confidence_intervals.set_index("metric")
     report = f"""# Phase 6 Validation
 
 ## Held-Out Test Metrics
@@ -285,6 +329,12 @@ def write_validation_report(
 - Gini: {metrics["gini"]:.4f}
 - KS: {metrics["ks"]:.4f}
 - Brier score: {metrics["brier"]:.4f}
+
+## Bootstrap 95% Confidence Intervals
+
+- AUC: [{ci_lookup.loc["auc", "lower_95"]:.4f}, {ci_lookup.loc["auc", "upper_95"]:.4f}]
+- Gini: [{ci_lookup.loc["gini", "lower_95"]:.4f}, {ci_lookup.loc["gini", "upper_95"]:.4f}]
+- KS: [{ci_lookup.loc["ks", "lower_95"]:.4f}, {ci_lookup.loc["ks", "upper_95"]:.4f}]
 
 ## Rank Ordering
 
@@ -299,6 +349,7 @@ def write_validation_report(
 ## Outputs
 
 - `reports/validation_metrics.csv`
+- `reports/validation_confidence_intervals.csv`
 - `reports/rank_ordering_table.csv`
 - `reports/calibration_table.csv`
 - `reports/psi_summary.csv`
@@ -315,18 +366,20 @@ def main() -> None:
     """Run Phase 6 held-out validation."""
     train_scores, test_scores = load_scores()
     metrics = calculate_discrimination(test_scores)
+    confidence_intervals = bootstrap_metric_confidence_intervals(test_scores)
     rank_table = make_rank_ordering_table(test_scores)
     calibration_table = make_calibration_table(test_scores)
     psi_summary = calculate_psi_summary(train_scores, test_scores)
 
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     pd.DataFrame([metrics]).to_csv(REPORTS_DIR / "validation_metrics.csv", index=False)
+    confidence_intervals.to_csv(REPORTS_DIR / "validation_confidence_intervals.csv", index=False)
     rank_table.to_csv(REPORTS_DIR / "rank_ordering_table.csv", index=False)
     calibration_table.to_csv(REPORTS_DIR / "calibration_table.csv", index=False)
     psi_summary.to_csv(REPORTS_DIR / "psi_summary.csv", index=False)
 
     save_validation_plots(test_scores, rank_table, calibration_table)
-    write_validation_report(metrics, rank_table, psi_summary)
+    write_validation_report(metrics, confidence_intervals, rank_table, psi_summary)
 
     score_psi = psi_summary.loc[psi_summary["variable"] == "score", "psi"].iloc[0]
     print(f"Test AUC: {metrics['auc']:.4f}")

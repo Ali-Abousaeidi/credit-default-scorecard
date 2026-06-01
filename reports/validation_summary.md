@@ -7,6 +7,12 @@
 - KS: 0.5434
 - Brier score: 0.0510
 
+## Bootstrap 95% Confidence Intervals
+
+- AUC: [0.8408, 0.8555]
+- Gini: [0.6817, 0.7110]
+- KS: [0.5287, 0.5593]
+
 ## Rank Ordering
 
 - Score bands are eight quantile bands ordered from lowest score / riskiest to highest score / safest.
@@ -20,6 +26,7 @@
 ## Outputs
 
 - `reports/validation_metrics.csv`
+- `reports/validation_confidence_intervals.csv`
 - `reports/rank_ordering_table.csv`
 - `reports/calibration_table.csv`
 - `reports/psi_summary.csv`
