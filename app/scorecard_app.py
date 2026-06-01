@@ -1,9 +1,17 @@
 """Streamlit demo for the credit scorecard."""
+# ruff: noqa: E402
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import pandas as pd
 import streamlit as st
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.config import SCORECARD_FILE
 from src.scoring import (
@@ -88,9 +96,7 @@ def main() -> None:
     display_reasons["log_odds_contribution"] = display_reasons["log_odds_contribution"].round(4)
     display_reasons["woe"] = display_reasons["woe"].round(4)
     st.dataframe(
-        display_reasons[
-            ["characteristic", "direction", "log_odds_contribution", "woe"]
-        ],
+        display_reasons[["characteristic", "direction", "log_odds_contribution", "woe"]],
         use_container_width=True,
         hide_index=True,
     )
