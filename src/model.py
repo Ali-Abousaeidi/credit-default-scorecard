@@ -83,11 +83,12 @@ def calculate_vif(data: pd.DataFrame, features: list[str]) -> pd.DataFrame:
     x = data[features]
     rows = []
     for i, feature in enumerate(features):
+        vif_value = float(variance_inflation_factor(x.values, i))
         rows.append(
             {
                 "feature": feature,
-                "vif": float(variance_inflation_factor(x.values, i)),
-                "passes_vif_check": bool(variance_inflation_factor(x.values, i) <= MAX_VIF),
+                "vif": vif_value,
+                "passes_vif_check": bool(vif_value <= MAX_VIF),
             }
         )
     return pd.DataFrame(rows).sort_values("vif", ascending=False)

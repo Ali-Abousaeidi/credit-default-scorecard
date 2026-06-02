@@ -243,11 +243,15 @@ def save_validation_plots(
     plt.savefig(FIGURES_DIR / "roc_curve.png", dpi=180, bbox_inches="tight", pad_inches=0.2)
     plt.close()
 
-    ks_values = tpr - fpr
+    # roc_curve sets thresholds[0] = inf; drop it so the x-axis is finite.
+    ks_thresholds = thresholds[1:]
+    ks_tpr = tpr[1:]
+    ks_fpr = fpr[1:]
+    ks_values = ks_tpr - ks_fpr
     plt.figure(figsize=(8.2, 5.8))
-    plt.plot(thresholds, tpr, label="Cumulative bads")
-    plt.plot(thresholds, fpr, label="Cumulative goods")
-    plt.plot(thresholds, ks_values, label="KS gap")
+    plt.plot(ks_thresholds, ks_tpr, label="Cumulative bads")
+    plt.plot(ks_thresholds, ks_fpr, label="Cumulative goods")
+    plt.plot(ks_thresholds, ks_values, label="KS gap")
     plt.xlabel("PD threshold")
     plt.ylabel("Rate")
     plt.title("KS curve")

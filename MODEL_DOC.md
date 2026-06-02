@@ -143,8 +143,14 @@ Rank ordering:
 
 Stability:
 
-- Score PSI indicates no significant train/test population shift.
-- Selected raw-characteristic PSI values are all below 0.10.
+- Score and characteristic PSI are computed train vs test on a random stratified
+  split. Because both samples are drawn from the same pool with no time dimension,
+  these PSI values are ~0 by construction and are **not** evidence of out-of-time
+  stability. They are reported only as a sanity check that the split did not
+  distort the score distribution. True population-stability monitoring would
+  require out-of-time samples (see Limitations).
+- Selected raw-characteristic PSI values are all below 0.10, as expected for a
+  random split.
 
 Calibration:
 
@@ -190,7 +196,8 @@ Interpretation: XGBoost improves discrimination, but the logistic scorecard rema
 ## 10. Limitations
 
 - The dataset is a public competition dataset, not a bank-owned production portfolio.
-- No time field is available, so validation is a stratified holdout rather than true out-of-time validation.
+- No time field is available, so validation is a stratified holdout rather than true out-of-time validation. Consequently the reported train-vs-test PSI is ~0 by construction and does not demonstrate population stability over time.
+- `DebtRatio` has mixed semantics: when `MonthlyIncome` is missing (~20% of rows) the field holds a raw dollar amount rather than a ratio (median ~1159 vs ~0.30 when income is present). It therefore partly proxies the income-missing population and carries the largest model coefficient despite the lowest IV. A production redevelopment should add an explicit income-missing indicator and regime-aware binning.
 - No reject inference is included.
 - No fairness testing is included.
 - No production monitoring pipeline is included.

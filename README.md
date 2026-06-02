@@ -14,7 +14,11 @@ Champion model: logistic regression on WoE-transformed predictors.
 | Gini | 0.6962 |
 | KS | 0.5434 |
 | Brier score | 0.0510 |
-| Score PSI, train vs test | 0.0003 |
+
+Stability note: train-vs-test score PSI is 0.0003, but because the split is a
+random stratified split with no time dimension, this value is ~0 by construction
+and is only a split-sanity check — not evidence of out-of-time stability. See the
+Caveats section.
 
 Bootstrap 95% confidence intervals:
 
@@ -197,6 +201,12 @@ MODEL_DOC.md         bank-style model documentation
 ## Caveats
 
 This is a portfolio scorecard, not a production credit decisioning system. It does not include adverse-action compliance review, full fairness testing, production monitoring infrastructure, approval workflow, or independent model validation sign-off.
+
+The dataset has no time field, so the holdout is a random stratified split rather
+than an out-of-time sample. Reported PSI values are therefore ~0 by construction
+and do not demonstrate stability over time. Also note that `DebtRatio` has mixed
+semantics when `MonthlyIncome` is missing (~20% of rows it holds a raw dollar
+amount, not a ratio); see `MODEL_DOC.md`.
 
 The model uses `age` because it is present in the public dataset and has
 predictive signal. A production model would need jurisdiction-specific legal,

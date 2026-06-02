@@ -57,7 +57,9 @@ DATA_DICTIONARY = [
         "DebtRatio",
         "Monthly debt payments and living costs divided by monthly gross income.",
         "Higher ratio should generally mean higher risk.",
-        "Very large values need review, especially when income is missing.",
+        "Mixed semantics: when MonthlyIncome is missing (~20% of rows) the field holds a "
+        "raw dollar amount, not a ratio (median ~1159 vs ~0.30 when income is present), so "
+        "it partly proxies the income-missing population. Capping does not fix this.",
     ),
     VariableDefinition(
         "MonthlyIncome",
