@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Credit Default Scorecard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #657080;
+      --line: #d8dee6;
+      --accent: #0f766e;
+      --accent-dark: #115e59;
+      --risk: #b42318;
+      --safe: #17633a;
+      --warn: #946200;
+      --table: #f0f4f8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.45;
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .topbar {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 18px;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.15;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 24px auto 40px;
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    section, aside {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .inputs {
+      padding: 14px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: var(--ink);
+      background: #fff;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      outline: 3px solid rgba(15, 118, 110, 0.16);
+    }
+
+    .inactive {
+      opacity: 0.72;
+    }
+
+    .tag {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .result-grid {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      min-height: 98px;
+      display: grid;
+      align-content: space-between;
+      gap: 10px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .metric strong {
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .band-low { color: var(--safe); }
+    .band-medium { color: var(--warn); }
+    .band-high { color: var(--risk); }
+
+    .tables {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    th {
+      background: var(--table);
+      color: #344054;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    td.numeric, th.numeric {
+      text-align: right;
+    }
+
+    .footnote {
+      padding: 11px 16px 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 860px) {
+      .topbar {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .meta {
+        text-align: left;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      th, td {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <h1>Credit Default Scorecard</h1>
+      <div class="meta">Standalone HTML app | 600 points at 50:1 odds | PDO 20</div>
+    </div>
+  </header>
+
+  <main>
+    <aside>
+      <div class="panel-head">
+        <h2>Applicant Inputs</h2>
+        <span class="tag">browser only</span>
+      </div>
+      <form class="inputs" id="applicant-form"></form>
+      <div class="footnote">Fields marked "not selected" are retained from the project input schema but do not affect the champion scorecard.</div>
+    </aside>
+
+    <div>
+      <section>
+        <div class="panel-head">
+          <h2>Score Result</h2>
+          <span class="tag" id="selected-count"></span>
+        </div>
+        <div class="result-grid">
+          <div class="metric">
+            <span>Credit score</span>
+            <strong id="score">--</strong>
+          </div>
+          <div class="metric">
+            <span>Predicted default probability</span>
+            <strong id="pd">--</strong>
+          </div>
+          <div class="metric">
+            <span>Risk band</span>
+            <strong id="band">--</strong>
+          </div>
+        </div>
+      </section>
+
+      <div class="tables">
+        <section>
+          <div class="panel-head">
+            <h2>Top Reason Codes</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Characteristic</th>
+                  <th>Bin</th>
+                  <th>Direction</th>
+                  <th class="numeric">Contribution</th>
+                  <th class="numeric">WoE</th>
+                </tr>
+              </thead>
+              <tbody id="reason-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <div class="panel-head">
+            <h2>Scorecard Points</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Characteristic</th>
+                  <th>Attribute</th>
+                  <th class="numeric">Event rate</th>
+                  <th class="numeric">WoE</th>
+                  <th class="numeric">Points</th>
+                </tr>
+              </thead>
+              <tbody id="points-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script id="scorecard-data" type="application/json">{"baseScore":600,"baseOdds":50.0,"pdo":20,"factor":28.85390081777927,"offset":487.1228762045055,"intercept":-2.6157191655138208,"caps":{"RevolvingUtilizationOfUnsecuredLines":1.3595517207299905,"DebtRatio":6184.0199999999895},"latePaymentColumns":["NumberOfTime30-59DaysPastDueNotWorse","NumberOfTimes90DaysLate","NumberOfTime60-89DaysPastDueNotWorse"],"features":[{"name":"RevolvingUtilizationOfUnsecuredLines","label":"Revolving utilization","defaultValue":0.35,"step":0.01,"selected":true},{"name":"age","label":"Age","defaultValue":45,"step":1,"selected":true},{"name":"NumberOfTime30-59DaysPastDueNotWorse","label":"30-59 DPD count","defaultValue":0,"step":1,"selected":true},{"name":"DebtRatio","label":"Debt ratio","defaultValue":0.35,"step":0.01,"selected":true},{"name":"MonthlyIncome","label":"Monthly income","defaultValue":5500,"step":250,"selected":true},{"name":"NumberOfOpenCreditLinesAndLoans","label":"Open credit lines/loans","defaultValue":8,"step":1,"selected":false},{"name":"NumberOfTimes90DaysLate","label":"90+ DPD count","defaultValue":0,"step":1,"selected":true},{"name":"NumberRealEstateLoansOrLines","label":"Real estate loans/lines","defaultValue":1,"step":1,"selected":true},{"name":"NumberOfTime60-89DaysPastDueNotWorse","label":"60-89 DPD count","defaultValue":0,"step":1,"selected":false},{"name":"NumberOfDependents","label":"Dependents","defaultValue":1,"step":1,"selected":true}],"selectedFeatures":["RevolvingUtilizationOfUnsecuredLines","age","NumberOfTime30-59DaysPastDueNotWorse","DebtRatio","MonthlyIncome","NumberOfTimes90DaysLate","NumberRealEstateLoansOrLines","NumberOfDependents"],"binsByFeature":{"RevolvingUtilizationOfUnsecuredLines":[{"label":"(-inf, 0.06)","missing":false,"lower":null,"upper":0.06,"lowerInclusive":false,"upperInclusive":false,"woe":1.3846248225343325,"coefficient":-0.6484153854499136,"eventRate":0.0176196893036027,"points":96.22995169434134,"pointsRounded":96},{"label":"[0.06, 0.12)","missing":false,"lower":0.06,"upper":0.12,"lowerInclusive":true,"upperInclusive":false,"woe":1.319614576139207,"coefficient":-0.6484153854499136,"eventRate":0.0187809755673419,"points":95.01365463199345,"pointsRounded":95},{"label":"[0.12, 0.19)","missing":false,"lower":0.12,"upper":0.19,"lowerInclusive":true,"upperInclusive":false,"woe":0.9067232808060056,"coefficient":-0.6484153854499136,"eventRate":0.0281115643258736,"points":87.28874206158912,"pointsRounded":87},{"label":"[0.19, 0.30)","missing":false,"lower":0.19,"upper":0.3,"lowerInclusive":true,"upperInclusive":false,"woe":0.592681417823758,"coefficient":-0.6484153854499136,"eventRate":0.0380882042625026,"points":81.41323448270681,"pointsRounded":81},{"label":"[0.30, 0.50)","missing":false,"lower":0.3,"upper":0.5,"lowerInclusive":true,"upperInclusive":false,"woe":0.1678493855271408,"coefficient":-0.6484153854499136,"eventRate":0.0570983861718686,"points":73.46491892437041,"pointsRounded":73},{"label":"[0.50, 0.74)","missing":false,"lower":0.5,"upper":0.74,"lowerInclusive":true,"upperInclusive":false,"woe":-0.4471848258171556,"coefficient":-0.6484153854499136,"eventRate":0.1007288924883579,"points":61.958051223010514,"pointsRounded":62},{"label":"[0.74, 0.94)","missing":false,"lower":0.74,"upper":0.94,"lowerInclusive":true,"upperInclusive":false,"woe":-1.0060074339627871,"coefficient":-0.6484153854499136,"eventRate":0.1637852593266606,"points":51.50286401252056,"pointsRounded":52},{"label":"[0.94, inf)","missing":false,"lower":0.94,"upper":null,"lowerInclusive":true,"upperInclusive":false,"woe":-1.4169021976414151,"coefficient":-0.6484153854499136,"eventRate":0.2280359820089955,"points":43.81530517819627,"pointsRounded":44}],"age":[{"label":"(-inf, 36.50)","missing":false,"lower":null,"upper":36.5,"lowerInclusive":false,"upperInclusive":false,"woe":-0.5476483609546117,"coefficient":-0.4093168759775643,"eventRate":0.1102011254108864,"points":63.8566322691385,"pointsRounded":64},{"label":"[36.50, 42.50)","missing":false,"lower":36.5,"upper":42.5,"lowerInclusive":true,"upperInclusive":false,"woe":-0.342960551519528,"coefficient":-0.4093168759775643,"eventRate":0.0916730328495034,"points":66.27407482848001,"pointsRounded":66},{"label":"[42.50, 47.50)","missing":false,"lower":42.5,"upper":47.5,"lowerInclusive":true,"upperInclusive":false,"woe":-0.2344350838941196,"coefficient":-0.4093168759775643,"eventRate":0.083027803238619,"points":67.55580276789259,"pointsRounded":68},{"label":"[47.50, 52.50)","missing":false,"lower":47.5,"upper":52.5,"lowerInclusive":true,"upperInclusive":false,"woe":-0.1422220311576505,"coefficient":-0.4093168759775643,"eventRate":0.0762717945038387,"points":68.64487474940032,"pointsRounded":69},{"label":"[52.50, 55.50)","missing":false,"lower":52.5,"upper":55.5,"lowerInclusive":true,"upperInclusive":false,"woe":-0.0126653238534899,"coefficient":-0.4093168759775643,"eventRate":0.0676304211187932,"points":70.17498980094939,"pointsRounded":70},{"label":"[55.50, 63.50)","missing":false,"lower":55.5,"upper":63.5,"lowerInclusive":true,"upperInclusive":false,"woe":0.3460095612143208,"coefficient":-0.4093168759775643,"eventRate":0.0482298121727434,"points":74.41107955403673,"pointsRounded":74},{"label":"[63.50, 67.50)","missing":false,"lower":63.5,"upper":67.5,"lowerInclusive":true,"upperInclusive":false,"woe":0.7768973193223934,"coefficient":-0.4093168759775643,"eventRate":0.0318844189811931,"points":79.50003139549978,"pointsRounded":80},{"label":"[67.50, 74.50)","missing":false,"lower":67.5,"upper":74.5,"lowerInclusive":true,"upperInclusive":false,"woe":1.033133377387549,"coefficient":-0.4093168759775643,"eventRate":0.024856385329209,"points":82.52627879984783,"pointsRounded":83},{"label":"[74.50, inf)","missing":false,"lower":74.5,"upper":null,"lowerInclusive":true,"upperInclusive":false,"woe":1.2768760681354712,"coefficient":-0.4093168759775643,"eventRate":0.0195849848449522,"points":85.40497468197518,"pointsRounded":85}],"NumberOfTime30-59DaysPastDueNotWorse":[{"label":"(-inf, 0.50)","missing":false,"lower":null,"upper":0.5,"lowerInclusive":false,"upperInclusive":false,"woe":0.5365365355501956,"coefficient":-0.6008542399094939,"eventRate":0.0401994093925634,"points":79.62650002075651,"pointsRounded":80},{"label":"[0.50, 1.50)","missing":false,"lower":0.5,"upper":1.5,"lowerInclusive":true,"upperInclusive":false,"woe":-0.894064021784089,"coefficient":-0.6008542399094939,"eventRate":0.1490244914902449,"points":54.82419440373608,"pointsRounded":55},{"label":"[1.50, inf)","missing":false,"lower":1.5,"upper":null,"lowerInclusive":true,"upperInclusive":false,"woe":-1.8576944483966529,"coefficient":-0.6008542399094939,"eventRate":0.3146125845033801,"points":38.117744640261066,"pointsRounded":38},{"label":"Missing","missing":true,"lower":null,"upper":null,"lowerInclusive":false,"upperInclusive":false,"woe":-2.791990015140057,"coefficient":-0.6008542399094939,"eventRate":0.5388349514563107,"points":21.919873009219536,"pointsRounded":22}],"DebtRatio":[{"label":"(-inf, 0.02)","missing":false,"lower":null,"upper":0.02,"lowerInclusive":false,"upperInclusive":false,"woe":0.2759237512573378,"coefficient":-1.5303130533205969,"eventRate":0.0515508021390374,"points":82.50812368798186,"pointsRounded":83},{"label":"[0.02, 0.31)","missing":false,"lower":0.02,"upper":0.31,"lowerInclusive":true,"upperInclusive":false,"woe":0.1197398560636062,"coefficient":-1.5303130533205969,"eventRate":0.0597443847840883,"points":75.61174553809619,"pointsRounded":76},{"label":"[0.31, 0.42)","missing":false,"lower":0.31,"upper":0.42,"lowerInclusive":true,"upperInclusive":false,"woe":0.0873249819618524,"coefficient":-1.5303130533205969,"eventRate":0.061591488086318,"points":74.18045053031486,"pointsRounded":74},{"label":"[0.42, 0.51)","missing":false,"lower":0.42,"upper":0.51,"lowerInclusive":true,"upperInclusive":false,"woe":-0.0831536942288857,"coefficient":-1.5303130533205969,"eventRate":0.0722129386488422,"points":66.65287916295388,"pointsRounded":67},{"label":"[0.51, inf)","missing":false,"lower":0.51,"upper":null,"lowerInclusive":true,"upperInclusive":false,"woe":-0.1608362958544642,"coefficient":-1.5303130533205969,"eventRate":0.0775936392374748,"points":63.2227649644804,"pointsRounded":63}],"MonthlyIncome":[{"label":"(-inf, 3332.50)","missing":false,"lower":null,"upper":3332.5,"lowerInclusive":false,"upperInclusive":false,"woe":-0.3708113370227459,"coefficient":-0.3492175459052149,"eventRate":0.0940186658084685,"points":66.5881702104682,"pointsRounded":67},{"label":"[3332.50, 4825.50)","missing":false,"lower":3332.5,"upper":4825.5,"lowerInclusive":true,"upperInclusive":false,"woe":-0.1974625042250295,"coefficient":-0.3492175459052149,"eventRate":0.0802559736981154,"points":68.3348830493273,"pointsRounded":68},{"label":"[4825.50, 5320.50)","missing":false,"lower":4825.5,"upper":5320.5,"lowerInclusive":true,"upperInclusive":false,"woe":-0.0921260641450003,"coefficient":-0.3492175459052149,"eventRate":0.0728163836863294,"points":69.39628340211885,"pointsRounded":69},{"label":"[5320.50, 6643.50)","missing":false,"lower":5320.5,"upper":6643.5,"lowerInclusive":true,"upperInclusive":false,"woe":-0.0046001834397237,"coefficient":-0.3492175459052149,"eventRate":0.0671236311961882,"points":70.27821942149059,"pointsRounded":70},{"label":"[6643.50, 7656.50)","missing":false,"lower":6643.5,"upper":7656.5,"lowerInclusive":true,"upperInclusive":false,"woe":0.1455690769716562,"coefficient":-0.3492175459052149,"eventRate":0.0583098213086121,"points":71.79136820322262,"pointsRounded":72},{"label":"[7656.50, 10351.00)","missing":false,"lower":7656.5,"upper":10351.0,"lowerInclusive":true,"upperInclusive":false,"woe":0.3115202652220508,"coefficient":-0.3492175459052149,"eventRate":0.0498378948955741,"points":73.46354024189529,"pointsRounded":73},{"label":"[10351.00, inf)","missing":false,"lower":10351.0,"upper":null,"lowerInclusive":true,"upperInclusive":false,"woe":0.5003600600505438,"coefficient":-0.3492175459052149,"eventRate":0.0416186746525378,"points":75.36634448228699,"pointsRounded":75},{"label":"Missing","missing":true,"lower":null,"upper":null,"lowerInclusive":false,"upperInclusive":false,"woe":0.1870480852846032,"coefficient":-0.3492175459052149,"eventRate":0.0560735096369341,"points":72.20932265491432,"pointsRounded":72}],"NumberOfTimes90DaysLate":[{"label":"(-inf, 0.50)","missing":false,"lower":null,"upper":0.5,"lowerInclusive":false,"upperInclusive":false,"woe":0.3861577005014664,"coefficient":-0.5847751029313039,"eventRate":0.0464199343176279,"points":76.84022761277477,"pointsRounded":77},{"label":"[0.50, inf)","missing":false,"lower":0.5,"upper":null,"lowerInclusive":true,"upperInclusive":false,"woe":-2.275911227784558,"coefficient":-0.5847751029313039,"eventRate":0.4108565737051793,"points":31.92302459418564,"pointsRounded":32},{"label":"Missing","missing":true,"lower":null,"upper":null,"lowerInclusive":false,"upperInclusive":false,"woe":-2.791990015140057,"coefficient":-0.5847751029313039,"eventRate":0.5388349514563107,"points":23.215205116288345,"pointsRounded":23}],"NumberRealEstateLoansOrLines":[{"label":"(-inf, 0.50)","missing":false,"lower":null,"upper":0.5,"lowerInclusive":false,"upperInclusive":false,"woe":-0.2390874859129952,"coefficient":-0.5962022959550383,"eventRate":0.0833826979124706,"points":66.21160709970181,"pointsRounded":66},{"label":"[0.50, 1.50)","missing":false,"lower":0.5,"upper":1.5,"lowerInclusive":true,"upperInclusive":false,"woe":0.2547373565944415,"coefficient":-0.5962022959550383,"eventRate":0.0525965720133026,"points":74.70675829298021,"pointsRounded":75},{"label":"[1.50, 2.50)","missing":false,"lower":1.5,"upper":2.5,"lowerInclusive":true,"upperInclusive":false,"woe":0.2020640216938525,"coefficient":-0.5962022959550383,"eventRate":0.0552840047193662,"points":73.80063145342585,"pointsRounded":74},{"label":"[2.50, inf)","missing":false,"lower":2.5,"upper":null,"lowerInclusive":true,"upperInclusive":false,"woe":-0.254390734037571,"coefficient":-0.5962022959550383,"eventRate":0.0845598073320845,"points":65.94834896569132,"pointsRounded":66}],"NumberOfDependents":[{"label":"(-inf, 0.50)","missing":false,"lower":null,"upper":0.5,"lowerInclusive":false,"upperInclusive":false,"woe":0.1371162999587989,"coefficient":-0.4689532270388664,"eventRate":0.0587756980668916,"points":72.17991066298421,"pointsRounded":72},{"label":"[0.50, 1.50)","missing":false,"lower":0.5,"upper":1.5,"lowerInclusive":true,"upperInclusive":false,"woe":-0.0895627820365261,"coefficient":-0.4689532270388664,"eventRate":0.0726435152374202,"points":69.11268655863046,"pointsRounded":69},{"label":"[1.50, 2.50)","missing":false,"lower":1.5,"upper":2.5,"lowerInclusive":true,"upperInclusive":false,"woe":-0.2244551906551533,"coefficient":-0.4689532270388664,"eventRate":0.082271147161066,"points":67.28743985493186,"pointsRounded":67},{"label":"[2.50, inf)","missing":false,"lower":2.5,"upper":null,"lowerInclusive":true,"upperInclusive":false,"woe":-0.3431361693017418,"coefficient":-0.4689532270388664,"eventRate":0.0916876574307304,"points":65.68155211606843,"pointsRounded":66},{"label":"Missing","missing":true,"lower":null,"upper":null,"lowerInclusive":false,"upperInclusive":false,"woe":0.4000999086662009,"coefficient":-0.4689532270388664,"eventRate":0.0458066689120916,"points":75.7383760342791,"pointsRounded":76}]}}</script>
+  <script>
+    const data = JSON.parse(document.getElementById("scorecard-data").textContent);
+    const form = document.getElementById("applicant-form");
+    const formatter = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+    const pctFormatter = new Intl.NumberFormat("en-US", {
+      style: "percent",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    function labelFor(featureName) {
+      const feature = data.features.find((item) => item.name === featureName);
+      return feature ? feature.label : featureName;
+    }
+
+    function renderInputs() {
+      for (const feature of data.features) {
+        const label = document.createElement("label");
+        if (!feature.selected) {
+          label.classList.add("inactive");
+        }
+        label.textContent = feature.label;
+
+        if (!feature.selected) {
+          const tag = document.createElement("span");
+          tag.className = "tag";
+          tag.textContent = "not selected";
+          label.appendChild(tag);
+        }
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.name = feature.name;
+        input.value = feature.defaultValue;
+        input.min = 0;
+        input.step = feature.step;
+        input.inputMode = "decimal";
+        input.addEventListener("input", scoreApplicant);
+        label.appendChild(input);
+        form.appendChild(label);
+      }
+    }
+
+    function valueFor(featureName) {
+      const input = form.elements[featureName];
+      const value = Number(input.value);
+      if (!Number.isFinite(value)) {
+        return null;
+      }
+      if (featureName === "age" && value <= 0) {
+        return null;
+      }
+      if (data.latePaymentColumns.includes(featureName) && (value === 96 || value === 98)) {
+        return null;
+      }
+      if (Object.prototype.hasOwnProperty.call(data.caps, featureName)) {
+        return Math.min(value, Number(data.caps[featureName]));
+      }
+      return value;
+    }
+
+    function matchesInterval(value, bin) {
+      if (bin.lower !== null) {
+        if (bin.lowerInclusive ? value < bin.lower : value <= bin.lower) {
+          return false;
+        }
+      }
+      if (bin.upper !== null) {
+        if (bin.upperInclusive ? value > bin.upper : value >= bin.upper) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function findBin(featureName, value) {
+      const bins = data.binsByFeature[featureName] || [];
+      if (value === null) {
+        return bins.find((bin) => bin.missing) || bins[0];
+      }
+      return bins.find((bin) => !bin.missing && matchesInterval(value, bin)) || bins[bins.length - 1];
+    }
+
+    function bandFor(score) {
+      if (score >= 620) {
+        return ["Low risk", "band-low"];
+      }
+      if (score >= 560) {
+        return ["Medium risk", "band-medium"];
+      }
+      return ["High risk", "band-high"];
+    }
+
+    function scoreApplicant() {
+      let linear = Number(data.intercept);
+      const reasons = [];
+
+      for (const featureName of data.selectedFeatures) {
+        const applicantValue = valueFor(featureName);
+        const bin = findBin(featureName, applicantValue);
+        const contribution = Number(bin.coefficient) * Number(bin.woe);
+        linear += contribution;
+        reasons.push({
+          characteristic: labelFor(featureName),
+          attribute: bin.label,
+          direction: contribution > 0 ? "raises PD" : "lowers PD",
+          contribution,
+          woe: Number(bin.woe)
+        });
+      }
+
+      const pd = 1 / (1 + Math.exp(-linear));
+      const score = Number(data.offset) - Number(data.factor) * linear;
+      const [band, bandClass] = bandFor(score);
+
+      document.getElementById("score").textContent = formatter.format(score);
+      document.getElementById("pd").textContent = pctFormatter.format(pd);
+      const bandElement = document.getElementById("band");
+      bandElement.textContent = band;
+      bandElement.className = bandClass;
+
+      reasons.sort((left, right) => Math.abs(right.contribution) - Math.abs(left.contribution));
+      document.getElementById("reason-body").innerHTML = reasons.slice(0, 5).map((reason) => `
+        <tr>
+          <td>${reason.characteristic}</td>
+          <td>${reason.attribute}</td>
+          <td>${reason.direction}</td>
+          <td class="numeric">${reason.contribution.toFixed(4)}</td>
+          <td class="numeric">${reason.woe.toFixed(4)}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderPoints() {
+      const rows = [];
+      for (const featureName of data.selectedFeatures) {
+        for (const bin of data.binsByFeature[featureName]) {
+          rows.push(`
+            <tr>
+              <td>${labelFor(featureName)}</td>
+              <td>${bin.label}</td>
+              <td class="numeric">${pctFormatter.format(bin.eventRate)}</td>
+              <td class="numeric">${Number(bin.woe).toFixed(4)}</td>
+              <td class="numeric">${bin.pointsRounded}</td>
+            </tr>
+          `);
+        }
+      }
+      document.getElementById("points-body").innerHTML = rows.join("");
+    }
+
+    renderInputs();
+    renderPoints();
+    document.getElementById("selected-count").textContent = `${data.selectedFeatures.length} characteristics`;
+    scoreApplicant();
+  </script>
+</body>
+</html>

@@ -4,6 +4,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
+APP_DIR = PROJECT_ROOT / "app"
 RAW_DATA_DIR = DATA_DIR / "raw"
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
 REPORTS_DIR = PROJECT_ROOT / "reports"
@@ -22,6 +23,7 @@ CLEANING_METADATA_FILE = REPORTS_DIR / "cleaning_metadata.json"
 BINNING_ARTIFACT_FILE = MODELS_DIR / "binning_artifacts.joblib"
 LOGISTIC_MODEL_FILE = MODELS_DIR / "logistic_scorecard_model.joblib"
 SCORECARD_FILE = REPORTS_DIR / "scorecard_points.csv"
+STATIC_SCORECARD_APP_FILE = APP_DIR / "scorecard_app.html"
 TARGET_COLUMN = "SeriousDlqin2yrs"
 RANDOM_STATE = 42
 TEST_SIZE = 0.25

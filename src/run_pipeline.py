@@ -12,6 +12,7 @@ from src import (
     diagnostics,
     eda,
     explainability,
+    export_static_app,
     fetch_data,
     model,
     scorecard,
@@ -30,6 +31,7 @@ PIPELINE_STEPS: list[tuple[str, Callable[[], None]]] = [
     ("Diagnostics", diagnostics.main),
     ("Explainability", explainability.main),
     ("Challenger", challenger.main),
+    ("Static HTML app", export_static_app.main),
 ]
 
 

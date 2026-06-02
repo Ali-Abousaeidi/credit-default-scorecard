@@ -10,6 +10,7 @@ from src.config import (
     CLEANING_METADATA_FILE,
     LOGISTIC_MODEL_FILE,
     REPORTS_DIR,
+    STATIC_SCORECARD_APP_FILE,
     TARGET_COLUMN,
     TEST_CLEAN_FILE,
     TEST_WOE_FILE,
@@ -92,6 +93,16 @@ def test_validation_metrics_are_in_expected_ranges() -> None:
     assert 0.80 <= metrics["auc"] <= 0.90
     assert 0.60 <= metrics["gini"] <= 0.80
     assert 0.45 <= metrics["ks"] <= 0.65
+
+
+def test_static_scorecard_app_contains_embedded_artifacts() -> None:
+    """The standalone HTML app should include the generated scorecard payload."""
+    require_file(STATIC_SCORECARD_APP_FILE)
+    app_html = STATIC_SCORECARD_APP_FILE.read_text(encoding="utf-8")
+
+    assert "Credit Default Scorecard" in app_html
+    assert "scorecard-data" in app_html
+    assert "RevolvingUtilizationOfUnsecuredLines" in app_html
 
 
 def test_lending_club_target_adapter() -> None:

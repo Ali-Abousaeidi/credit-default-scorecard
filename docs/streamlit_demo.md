@@ -22,3 +22,18 @@ The app lets a reviewer enter borrower characteristics and see:
 
 The app uses ignored local model artifacts from `models/`, so those artifacts
 are regenerated locally rather than committed to GitHub.
+
+## Standalone HTML App
+
+The project also generates a browser-only version at:
+
+```text
+app/scorecard_app.html
+```
+
+Open that file directly in a browser after running the pipeline. It embeds the
+current scorecard points and model coefficients, so regenerate it with:
+
+```powershell
+python -m src.export_static_app
+```

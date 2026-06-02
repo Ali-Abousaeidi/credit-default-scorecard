@@ -37,6 +37,7 @@ Credit_Default_Scorecard_Project_Plan.docx
 
 # Generated reports
 *.html
+!app/scorecard_app.html
 *.pdf
 *.pkl
 *.joblib

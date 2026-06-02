@@ -150,6 +150,7 @@ python -m src.calibration
 python -m src.diagnostics
 python -m src.explainability
 python -m src.challenger
+python -m src.export_static_app
 ```
 
 Run the test suite:
@@ -170,6 +171,13 @@ streamlit run app/scorecard_app.py
 The app lets a reviewer enter applicant characteristics and see the predicted
 PD, score, risk band, reason codes, and scorecard points table.
 
+There is also a standalone browser version generated from the scorecard
+artifacts:
+
+```text
+app/scorecard_app.html
+```
+
 ## Repository Map
 
 ```text
@@ -177,7 +185,7 @@ data/raw/            original dataset files, git-ignored
 data/processed/      cleaned and transformed datasets, git-ignored
 notebooks/           EDA notebook entry point
 src/                 reproducible pipeline modules
-app/                 Streamlit scorecard demo
+app/                 Streamlit and standalone HTML scorecard demos
 tests/               regression tests
 reports/             metrics, scorecard, validation, and documentation outputs
 reports/figures/     plots used in README and reports
